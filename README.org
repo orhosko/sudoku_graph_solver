@@ -1,0 +1,50 @@
+* Overview
+This project implements a Sudoku solver using graph coloring algorithms. The implementation treats Sudoku as a graph coloring problem where each cell is a vertex and edges represent constraints (same row, column, or block).
+
+* Features
+- Support for both 4x4 and 9x9 Sudoku boards
+- Multiple solver implementations:
+  - Greedy Solver
+  - DSatur Solver
+  - Backtracking Solver
+  - Heuristic Kempe Solver
+- Step counting for performance analysis
+- Simple and extended board configurations
+
+* Installation
+#+BEGIN_SRC bash
+make all
+#+END_SRC
+
+* Usage
+#+BEGIN_SRC bash
+./main <solver_type> [board_size]
+#+END_SRC
+
+Where:
+- solver_type: greedy, dsatur, backtrack, kempe
+- board_size: 4x4 (default) or 9x9 or 9x9_extreme
+
+* Example
+#+BEGIN_SRC
+Using Heuristic Kempe solver on 4x4 board:
+ 4  1 -1  3 
+-1  2 -1  4 
+ 2 -1  4  1 
+ 1  4 -1 -1 
+=========================
+Solving Sudoku...
+=========================
+ 4  1  2  3 
+ 3  2  1  4 
+ 2  3  4  1 
+ 1  4  3  2 
+Steps taken: 6
+#+END_SRC
+
+* Project Structure
+- main: Full implementation with all solvers and board sizes
+- main_simpl: Simplified version with only greedy coloring and 4x4 board support
+
+* License
+This project is open source and available under the MIT License. 
