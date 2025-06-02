@@ -7,6 +7,7 @@
 #include "solvers/heuristic_kempe_solver.hpp"
 #include "common/types.hpp"
 #include <cmath>
+#include <memory>
 
 constexpr bool is_perfect_square(int n) {
     if (n <= 0)
