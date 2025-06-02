@@ -12,6 +12,7 @@ class BacktrackingSolver : public BaseSolver<N> {
 
 private:
     const Matrix* adjMatrix;
+    std::array<int, SIZE> best_values;
 
     bool is_safe(const std::array<int, SIZE>& values, int pos, int color) {
         for (int i = 0; i < SIZE; ++i) {
@@ -43,7 +44,7 @@ private:
         std::fill(available.begin(), available.end(), true);
 
         for (int i = 0; i < SIZE; ++i) {
-            if ((*adjMatrix)[pos][i] && values[i] != -1) {
+            if ((*adjMatrix)[pos][i] && values[i] != -1 && values[i] < N) {
                 available[values[i]] = false;
             }
         }
@@ -80,6 +81,7 @@ private:
         std::sort(color_constraints.begin(), color_constraints.end());
 
         for (const auto& [constraints, color] : color_constraints) {
+            this->steps++;  // Count each color attempt
             if (is_safe(values, pos, color)) {
                 values[pos] = color;
                 if (backtrack_solve(values, depth + 1)) {
@@ -88,6 +90,9 @@ private:
                 values[pos] = -1;
             }
         }
+
+        // Save the current state as the best attempt
+        best_values = values;
         return false;
     }
 
@@ -96,19 +101,26 @@ public:
         adjMatrix = &adj_matrix;
         std::array<int, SIZE> values;
         std::fill(values.begin(), values.end(), -1);
+        std::fill(best_values.begin(), best_values.end(), -1);
 
         for (int i = 0; i < SIZE; ++i) {
             if (board[i / N][i % N].value != -1) {
                 values[i] = board[i / N][i % N].value;
+                best_values[i] = values[i];
             }
         }
 
         if (backtrack_solve(values, 0)) {
+            // If we found a solution, use the solved values
             for (int i = 0; i < SIZE; ++i) {
                 board[i / N][i % N].value = values[i];
             }
         } else {
             std::cerr << "No solution exists for this puzzle.\n";
+            // If we failed, use the best attempt
+            for (int i = 0; i < SIZE; ++i) {
+                board[i / N][i % N].value = best_values[i];
+            }
         }
     }
 }; 

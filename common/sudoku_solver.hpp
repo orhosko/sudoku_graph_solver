@@ -1,14 +1,14 @@
 #pragma once
 
-#include "base_solver.hpp"
-#include "greedy_solver.hpp"
-#include "dsatur_solver.hpp"
-#include "backtracking_solver.hpp"
-#include "heuristic_kempe_solver.hpp"
+#include "solvers/base_solver.hpp"
+#include "solvers/greedy_solver.hpp"
+#include "solvers/dsatur_solver.hpp"
+#include "solvers/backtracking_solver.hpp"
+#include "solvers/heuristic_kempe_solver.hpp"
+#include "common/types.hpp"
 #include <memory>
 #include <cmath>
 
-// A constexpr function to check if a number is a perfect square
 constexpr bool is_perfect_square(int n) {
     if (n <= 0)
         return false;
@@ -16,11 +16,9 @@ constexpr bool is_perfect_square(int n) {
     return root * root == n;
 }
 
-// Define a concept for perfect squares
 template <int N>
 concept PerfectSquare = is_perfect_square(N);
 
-// Enum to select solver type
 enum class SolverType {
     Greedy,
     DSatur,
@@ -28,7 +26,6 @@ enum class SolverType {
     HeuristicKempe
 };
 
-// Modified SudokuSolver to use templates for solver selection
 template <int N, SolverType Type>
     requires PerfectSquare<N>
 class SudokuSolver {
@@ -39,8 +36,19 @@ public:
 
     Board board;
     Matrix adjMatrix{};
+    std::unique_ptr<BaseSolver<N>> solver;
 
-    SudokuSolver(const Board &initial_board) : board(initial_board) {}
+    SudokuSolver(const Board &initial_board) : board(initial_board) {
+        if constexpr (Type == SolverType::Greedy) {
+            solver = std::make_unique<GreedySolver<N>>();
+        } else if constexpr (Type == SolverType::DSatur) {
+            solver = std::make_unique<DSaturSolver<N>>();
+        } else if constexpr (Type == SolverType::Backtracking) {
+            solver = std::make_unique<BacktrackingSolver<N>>();
+        } else {
+            solver = std::make_unique<HeuristicKempeSolver<N>>();
+        }
+    }
 
     void create_row_deps() {
         for (int i = 0; i < SIZE; ++i) {
@@ -99,18 +107,6 @@ public:
         create_col_deps();
         create_block_deps();
         normalize_adj_matrix();
-
-        std::unique_ptr<BaseSolver<N>> solver;
-        if constexpr (Type == SolverType::Greedy) {
-            solver = std::make_unique<GreedySolver<N>>();
-        } else if constexpr (Type == SolverType::DSatur) {
-            solver = std::make_unique<DSaturSolver<N>>();
-        } else if constexpr (Type == SolverType::Backtracking) {
-            solver = std::make_unique<BacktrackingSolver<N>>();
-        } else {
-            solver = std::make_unique<HeuristicKempeSolver<N>>();
-        }
-
         solver->solve(board, adjMatrix);
     }
 
@@ -134,5 +130,9 @@ public:
             }
             std::cout << "\n";
         }
+    }
+
+    std::size_t get_steps() const {
+        return solver->get_steps();
     }
 }; 

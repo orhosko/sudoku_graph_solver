@@ -14,6 +14,7 @@ class HeuristicKempeSolver : public BaseSolver<N> {
 private:
     const Matrix* adjMatrix;
     static constexpr int K = N;  // K is equal to N (4 or 9)
+    std::array<int, SIZE> best_values;
 
     int find_vertex_with_degree_less_than_k(const std::array<int, SIZE>& values) {
         for (int i = 0; i < SIZE; ++i) {
@@ -54,6 +55,7 @@ private:
     bool recursive_solve(std::array<int, SIZE>& values, int depth = 0) {
         // Safety check to prevent infinite recursion
         if (depth > SIZE) {
+            std::cerr << "Heuristic Kempe solver failed: Maximum recursion depth exceeded\n";
             return false;
         }
 
@@ -81,29 +83,43 @@ private:
         // If less than K colors are used by adjacent vertices
         if (used_colors.size() < K) {
             // Try each unused color
+            bool found_color = false;
             for (int color = 0; color < K; ++color) {
                 if (used_colors.find(color) == used_colors.end()) {
+                    this->steps++;  // Count each color attempt
                     values[vertex] = color;
                     if (recursive_solve(values, depth + 1)) {
-                        return true;
+                        found_color = true;
+                        break;
                     }
                     values[vertex] = -1;
                 }
+            }
+            if (!found_color) {
+                return false;
             }
         } else {
             // If K or more colors are used, try each color
+            bool found_color = false;
             for (int color = 0; color < K; ++color) {
                 if (is_valid_color(values, vertex, color)) {
+                    this->steps++;  // Count each color attempt
                     values[vertex] = color;
                     if (recursive_solve(values, depth + 1)) {
-                        return true;
+                        found_color = true;
+                        break;
                     }
                     values[vertex] = -1;
                 }
             }
+            if (!found_color) {
+                return false;
+            }
         }
 
-        return false;
+        // Save the current state as the best attempt
+        best_values = values;
+        return true;
     }
 
 public:
@@ -111,20 +127,30 @@ public:
         adjMatrix = &adj_matrix;
         std::array<int, SIZE> values;
         std::fill(values.begin(), values.end(), -1);
+        std::fill(best_values.begin(), best_values.end(), -1);
 
         // Initialize with pre-colored values
         for (int i = 0; i < SIZE; ++i) {
             if (board[i / N][i % N].value != -1) {
                 values[i] = board[i / N][i % N].value;
+                best_values[i] = values[i];
             }
         }
 
-        if (recursive_solve(values)) {
+        bool success = recursive_solve(values);
+        if (!success) {
+            std::cerr << "Heuristic Kempe solver failed to find a solution.\n";
+            // Print where it got stuck
             for (int i = 0; i < SIZE; ++i) {
-                board[i / N][i % N].value = values[i];
+                if (best_values[i] == -1) {
+                    std::cerr << "Failed at position " << i << " (" << i / N << "," << i % N << ")\n";
+                }
             }
-        } else {
-            std::cerr << "No solution exists for this puzzle.\n";
+        }
+
+        // Always apply the best attempt, even if we failed
+        for (int i = 0; i < SIZE; ++i) {
+            board[i / N][i % N].value = best_values[i];
         }
     }
 }; 

@@ -33,7 +33,9 @@ public:
             }
         }
 
+        bool failed = false;
         for (int step = 0; step < SIZE; ++step) {
+            this->steps++;  // Count each vertex coloring attempt
             int max_sat = -1, max_deg = -1, selected = -1;
 
             for (int i = 0; i < SIZE; ++i) {
@@ -68,7 +70,9 @@ public:
 
             if (chosen_color == -1) {
                 std::cerr << "DSatur failed: no available color for square " << selected << '\n';
-                return;
+                failed = true;
+                // Use the first available color even if it's not valid
+                chosen_color = -1;
             }
 
             colors[selected] = chosen_color;
@@ -81,6 +85,7 @@ public:
             }
         }
 
+        // Always apply the colorings, even if we failed
         for (int i = 0; i < SIZE; ++i) {
             board[i / N][i % N].value = colors[i];
         }

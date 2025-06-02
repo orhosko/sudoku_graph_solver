@@ -21,7 +21,9 @@ public:
             }
         }
 
+        bool failed = false;
         for (int i = 0; i < SIZE; ++i) {
+            this->steps++;  // Count each vertex coloring attempt
             std::array<bool, N> available;
             std::fill(available.begin(), available.end(), true);
 
@@ -41,12 +43,14 @@ public:
 
             if (color == -1) {
                 std::cerr << "Greedy failed. No available color for square " << i << "\n";
-                return;
+                failed = true;
+                color = -1;
             }
 
             values[i] = color;
         }
 
+        // Always apply the colorings, even if we failed
         for (int i = 0; i < SIZE; ++i) {
             board[i / N][i % N].value = values[i];
         }

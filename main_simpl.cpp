@@ -3,23 +3,15 @@
 #include <iostream>
 
 struct Square {
-    // int x;
-    // int y;
     int index;
-    int value; // color
+    int value;  // color
 };
 
-// TODO: make constexpr
-
 std::array<std::array<Square, 4>, 4> board{
-    std::array<Square, 4>{Square{0, 0}, Square{1, 1}, Square{2, -1},
-                          Square{3, 3}},
-    std::array<Square, 4>{Square{4, -1}, Square{5, 2}, Square{6, -1},
-                          Square{7, 0}},
-    std::array<Square, 4>{Square{8, 2}, Square{9, -1}, Square{10, 0},
-                          Square{11, 1}},
-    std::array<Square, 4>{Square{12, 3}, Square{13, 0}, Square{14, -1},
-                          Square{15, -1}}};
+    std::array<Square, 4>{Square{0, 0}, Square{1, 1}, Square{2, -1}, Square{3, 3}},
+    std::array<Square, 4>{Square{4, -1}, Square{5, 2}, Square{6, -1}, Square{7, 0}},
+    std::array<Square, 4>{Square{8, 2}, Square{9, -1}, Square{10, 0}, Square{11, 1}},
+    std::array<Square, 4>{Square{12, 3}, Square{13, 0}, Square{14, -1}, Square{15, -1}}};
 
 std::array<std::array<int, 16>, 16> adjMatrix{};
 
@@ -51,9 +43,6 @@ void create_block_deps(std::array<std::array<int, 16>, 16> adjMartix) {
 
         int block_min = (block_index % 2) * 2 + (block_index / 2) * 8;
 
-        // std::cout << "block_index: " << block_index << std::endl;
-        // std::cout << "block_min: " << block_min << std::endl;
-
         adjMatrix[i][block_min] += 1;
         adjMatrix[i][block_min + 1] += 1;
         adjMatrix[i][block_min + 4] += 1;
@@ -74,11 +63,11 @@ void normalize_adj_matrix(std::array<std::array<int, 16>, 16> &adjMatrix) {
 void greedy_coloring(std::array<std::array<Square, 4>, 4> &board,
                      std::array<std::array<int, 16>, 16> &adjMatrix) {
     std::array<int, 16> values;
-    std::fill(values.begin(), values.end(), -1);
+    std::ranges::fill(values, -1);
 
     for (int i = 0; i < 16; ++i) {
         std::array<bool, 4> available;
-        std::fill(available.begin(), available.end(), true);
+        std::ranges::fill(available, true);
 
         for (int j = 0; j < 16; ++j) {
             if (adjMatrix[i][j] == 1 && values[j] != -1) {
@@ -112,6 +101,9 @@ int main() {
     create_block_deps(adjMatrix);
 
     normalize_adj_matrix(adjMatrix);
+
+    std::cout << "===========================" << std::endl;
+    std::cout << "Adjacency Matrix:" << std::endl;
 
     for (int i = 0; i < 16; ++i) {
         for (int j = 0; j < 16; ++j) {
