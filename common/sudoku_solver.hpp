@@ -6,7 +6,6 @@
 #include "solvers/backtracking_solver.hpp"
 #include "solvers/heuristic_kempe_solver.hpp"
 #include "common/types.hpp"
-#include <memory>
 #include <cmath>
 
 constexpr bool is_perfect_square(int n) {

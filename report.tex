@@ -1,4 +1,4 @@
-% Created 2025-06-02 Mon 22:44
+% Created 2025-06-02 Mon 22:52
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
@@ -26,12 +26,12 @@
 
 \maketitle
 \section{Overview}
-\label{sec:orgfcd7e9e}
+\label{sec:org670de8a}
 This project implements a Sudoku solver using graph coloring algorithms. The implementation treats Sudoku as a graph coloring problem where each cell is a vertex and edges represent constraints (same row, column, or block).
 
-There are 2 executables 'main' and 'main\textsubscript{simpl}'. 'main\textsubscript{simpl}' only provides dependency creation, greedy coloring and 4x4 board. 'main' is way more configurable and supports the following solvers and both 4x4 and 9x9 boards.
+There are 2 executables 'main' and 'main\_simpl'. 'main\_simpl' only provides dependency creation, greedy coloring and 4x4 board. 'main' is way more configurable and supports the following solvers and both 4x4 and 9x9 boards.
 \subsection{Graph Representation}
-\label{sec:org61ba6c8}
+\label{sec:org5b06ec6}
 \begin{itemize}
 \item Each Sudoku cell is represented as a vertex in the graph
 \item Edges connect vertices that cannot have the same value
@@ -44,7 +44,7 @@ There are 2 executables 'main' and 'main\textsubscript{simpl}'. 'main\textsubscr
 \item The graph is represented using an adjacency matrix for efficient constraint checking
 \end{itemize}
 \subsection{Solver Types}
-\label{sec:org2f036af}
+\label{sec:org1a4782e}
 \begin{enumerate}
 \item Greedy Solver
 \begin{itemize}
@@ -89,7 +89,7 @@ There are 2 executables 'main' and 'main\textsubscript{simpl}'. 'main\textsubscr
 \end{itemize}
 \end{enumerate}
 \subsection{Step Counting}
-\label{sec:org0ad7e44}
+\label{sec:orge722715}
 \begin{itemize}
 \item Each solver tracks number of coloring attempts
 \item Greedy/DSatur: Count vertex coloring attempts
@@ -105,7 +105,7 @@ There are 2 executables 'main' and 'main\textsubscript{simpl}'. 'main\textsubscr
 \end{itemize}
 \end{itemize}
 \section{Usage}
-\label{sec:orgc417aab}
+\label{sec:org0e2f6f0}
 \begin{verbatim}
 make all
 ./main <solver_type> [board_size]
@@ -113,11 +113,11 @@ make all
 
 Where:
 \begin{itemize}
-\item solver\textsubscript{type}: greedy, dsatur, backtrack, kempe
-\item board\textsubscript{name}: 4x4 (default) or 9x9 or 9x9\textsubscript{extreme}
+\item solver\_type: greedy, dsatur, backtrack, kempe
+\item board\_name: 4x4 (default) or 9x9 or 9x9\_extreme
 \end{itemize}
 \subsection{Example Output}
-\label{sec:orgd5d5318}
+\label{sec:org45fedc6}
 \begin{verbatim}
 Using Heuristic Kempe solver on 4x4 board:
  4  1 -1  3 
